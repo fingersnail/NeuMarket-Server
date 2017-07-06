@@ -52,7 +52,8 @@ SOURCES += \
     util/utilities.cpp \
     entity/productkindstatistic.cpp \
     entity/saleskindstatistic.cpp \
-    entity/salesmonthstatistic.cpp
+    entity/salesmonthstatistic.cpp \
+    entity/userdetail.cpp
 
 HEADERS += \
         widget.h \
@@ -77,7 +78,8 @@ HEADERS += \
     util/utilities.h \
     entity/productkindstatistic.h \
     entity/saleskindstatistic.h \
-    entity/salesmonthstatistic.h
+    entity/salesmonthstatistic.h \
+    entity/userdetail.h
 
 FORMS += \
         widget.ui

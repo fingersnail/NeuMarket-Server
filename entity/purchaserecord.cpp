@@ -107,7 +107,27 @@ void PurchaseRecord::setComment(const QString &comment)
 QVariantList PurchaseRecord::object2VariantList()
 {
     QVariantList variantList;
-    variantList << purchaseId << productId << planEmployeeId << purchaseEmployeeId << supplierId << purchaseDate
-                << quantity << moneyAmount << isFinish << comment;
+    variantList << purchaseId << productId << planEmployeeId << purchaseEmployeeId << supplierName << purchaseDate
+                << quantity << moneyAmount << isFinish << comment << productName;
     return variantList;
+}
+
+QString PurchaseRecord::getSupplierName() const
+{
+    return supplierName;
+}
+
+void PurchaseRecord::setSupplierName(const QString &value)
+{
+    supplierName = value;
+}
+
+QString PurchaseRecord::getProductName() const
+{
+    return productName;
+}
+
+void PurchaseRecord::setProductName(const QString &value)
+{
+    productName = value;
 }

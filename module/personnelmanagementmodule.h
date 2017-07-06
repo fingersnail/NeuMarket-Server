@@ -37,13 +37,10 @@ public:
         QueryEmployeeByName_Method,
         ModifyEmployee_Method,
         DeleteEmployee_Method,
-        AddEmployee_Method
+        AddEmployee_Method,
+        ChangePositionState_Method
     };
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "") override;
+    QByteArray handleRequest(int methodName, QVariantList i);
     static PersonnelManagementModule* getSingleInstance();
     QVector<shared_ptr<AbstractObject> > queryAllSupplier();
     shared_ptr<AbstractObject> querySupplierById(int supplierId);
@@ -52,15 +49,16 @@ public:
                         const QString &description, const QString &picture);
     bool deleteSupplier(int supplierId);
     bool addSupplier(const QString &name, const QString &address, const QString &phone,
-                     const QString &description);
+                     const QString &description, const QString &picture);
     QVector<shared_ptr<AbstractObject> > queryAllEmployee();
     shared_ptr<AbstractObject> queryEmployeeById(int employeeId);
     QVector<shared_ptr<AbstractObject> > queryEmployeeByName(const QString &employeeName);
     bool modifyEmployee(int employeeId, int groupId, const QString &gender, const QString &name,
-                        const QString &phone, const QString &address, const QString &email);
+                        const QString &phone, const QString &address, const QString &email, const QString &isWorking);
     bool deleteEmployee(int employeeId);
-    bool addEmployee(int groupId, const QString &gender, const QString &name,
-                     const QString &phone, const QString &address, const QString &email);
+    bool addEmployee(const QString &gender, const QString &name,
+                     const QString &phone, const QString &address, const QString &email, const QString &isWorking);
+    bool changePositionState(int employeeId, int status);
 private:
     static PersonnelManagementModule *pm;
     PersonnelManagementModule();

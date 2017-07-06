@@ -19,27 +19,31 @@ public:
         ChangePassword_Method,
         QueryUserByEmployeeId_Method,
         QueryUserByName_Method,
-        QueryAllUser_Method
+        QueryAllUser_Method,
+        QueryAllUserDetail_Method,
+        ModifyUser_Method
     };
 
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "") override;
+   QByteArray handleRequest(int methodName, QVariantList i);
     static SystemManagementModule* getSingleInstance();
-    bool addUser(int employeeId, const QString &password, int groupId); //最开始的想法是返回成功和失败，但好像也可以返回添加后的主键
+    //requesttype,employeeId,athority,sex,name,tel,address,email
+    bool addUser(int employeeId, int groupId, bool gender, const QString &name,
+                 const QString &tel, const QString &address, const QString &email);
+    bool modifyUser(int employeeId, int groupId, bool gender, const QString &name,
+                 const QString &tel, const QString &address, const QString &email);
     bool deleteUser(int employeeId);
     bool changePassword(int employeeId, const QString &password);
     shared_ptr<AbstractObject> queryUserByEmployeeId(int employeeId);
     QVector<shared_ptr<AbstractObject> > queryUserByName(const QString &name);
     QVector<shared_ptr<AbstractObject> > queryAllUser();
+    QVector<shared_ptr<AbstractObject> > queryAllUserDetail();
 
 private:
     static SystemManagementModule *sm;
     SystemManagementModule();
     SystemManagementModule(const SystemManagementModule&);
     void queryResult2UserVector(QSqlQuery &query, QVector<shared_ptr<AbstractObject> > &vec);
+    void queryResult2UserDetailVector(QSqlQuery &query, QVector<shared_ptr<AbstractObject> > &vec);
     void queryResult2UserObject(QSqlQuery &query, shared_ptr<AbstractObject> &obj);
 };
 

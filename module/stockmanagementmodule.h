@@ -28,13 +28,11 @@ public:
         DeleteStock_Method,
         ModifyStock_Method,
         DeleteProduct_Method,
-        QueryStockProductKindStatistic_Method
+        QueryStockProductKindStatistic_Method,
+        AddProduct_Method,
+        ModifyProduct_Method
     };
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "") override;
+    QByteArray handleRequest(int methodName, QVariantList i);
     static StockManagementModule* getSingleInstance();
     QVector<shared_ptr<AbstractObject> > queryAllStock();
     shared_ptr<AbstractObject> queryStockByProductId(int productId);
@@ -44,6 +42,8 @@ public:
     bool deleteStock(int productId, int quantity);
     bool modifyStock(int productId, int quantity);
     bool deleteProduct(int productId);
+    bool addProduct(double price, const QString &name, const QString &picture, const QString &description, int instockQuantity, const QString &kind);
+    bool modifyProduct(int productId, double price, const QString &name, const QString &picture, const QString &description, int instockQuantity, const QString &kind);
     QVector<shared_ptr<AbstractObject> > queryStockProductKindStatistic();
 private:
     StockManagementModule() = default;

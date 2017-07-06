@@ -52,9 +52,20 @@ void SalesRecord::setQuantity(int quantity)
 
 QVariantList SalesRecord::object2VariantList()
 {
+    //product_id product_name price num sale_time(string)
     QVariantList variantList;
-    variantList << salesId << productId << quantity << moneyAmount << time.toString("yyyy-MM-dd HH:mm:ss.zzz");
+    variantList << productId << name << moneyAmount << quantity << time.toString("yyyy-MM-dd HH:mm:ss");
     return variantList;
+}
+
+QString SalesRecord::getName() const
+{
+    return name;
+}
+
+void SalesRecord::setName(const QString &value)
+{
+    name = value;
 }
 
 SalesRecord::SalesRecord()

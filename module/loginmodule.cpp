@@ -6,12 +6,10 @@ LoginModule::LoginModule()
 {
 }
 
-QByteArray LoginModule::handleRequest(int methodName,
-                                      const QString &parameter1, const QString &parameter2,
-                                      const QString &parameter3, const QString &parameter4, const QString &parameter5, const QString &parameter6, const QString &parameter7)
+QByteArray LoginModule::handleRequest(int methodName, QVariantList i)
 {
     Serializer serializer;
-    shared_ptr<AbstractObject> resultObject = validate(parameter1.toInt(), parameter2);
+    shared_ptr<AbstractObject> resultObject = validate(i[0].toInt(), i[1].toString());
     QVariantList variantList = resultObject->object2VariantList();
     QByteArray sendMsg = serializer.serialize(variantList);
     return sendMsg;

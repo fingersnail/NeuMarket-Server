@@ -4,8 +4,10 @@
 
 StockManagementModule* StockManagementModule::sm = new StockManagementModule;
 
-QByteArray StockManagementModule::handleRequest(int methodName, const QString &parameter1, const QString &parameter2, const QString &parameter3, const QString &parameter4, const QString &parameter5, const QString &parameter6, const QString &parameter7)
+QByteArray StockManagementModule::handleRequest(int methodName, QVariantList i)
 {
+    qDebug() << "in";
+    qDebug() << methodName;
     QByteArray sendMsg;
     bool excuteResult;
     QVector<shared_ptr<AbstractObject> > resultVector;
@@ -18,36 +20,44 @@ QByteArray StockManagementModule::handleRequest(int methodName, const QString &p
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case QueryStockByProductId_Method:
-        resultObject = queryStockByProductId(parameter1.toInt());
+        resultObject = queryStockByProductId(i[0].toInt());
         variantList = Utilities::object2VariantList(resultObject);
         break;
     case QueryStockByProductName_Method:
-        resultVector = queryStockByProductName(parameter1);
+        resultVector = queryStockByProductName(i[0].toString());
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case AddStock_Method:
-        excuteResult = addStock(parameter1.toInt(), parameter2.toInt());
+        excuteResult = addStock(i[0].toInt(), i[1].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case AddNewProduct_Method:
-        excuteResult = addNewProduct(parameter1.toDouble(), parameter2, parameter3, parameter4, parameter5);
+        excuteResult = addNewProduct(i[0].toDouble(), i[1].toString(), i[2].toString(), i[3].toString(), i[4].toString());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case DeleteStock_Method:
-        excuteResult = deleteStock(parameter1.toInt(), parameter2.toInt());
+        excuteResult = deleteStock(i[0].toInt(), i[1].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case ModifyStock_Method:
-        excuteResult = modifyStock(parameter1.toInt(), parameter2.toInt());
+        excuteResult = modifyStock(i[0].toInt(), i[1].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case DeleteProduct_Method:
-        excuteResult = deleteProduct(parameter1.toInt());
+        excuteResult = deleteProduct(i[0].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case QueryStockProductKindStatistic_Method:
         resultVector = queryStockProductKindStatistic();
         variantList = Utilities::vector2VariantList(resultVector);
+        break;
+    case AddProduct_Method:
+        excuteResult = addProduct(i[0].toDouble(), i[1].toString(), i[2].toString(), i[3].toString(), i[4].toInt(), i[5].toString());
+        variantList = Utilities::bool2VariantList(excuteResult);
+        break;
+    case ModifyProduct_Method:
+        excuteResult = modifyProduct(i[0].toInt(), i[1].toDouble(), i[2].toString(), i[3].toString(), i[4].toString(), i[5].toInt(), i[6].toString());
+        variantList = Utilities::bool2VariantList(excuteResult);
         break;
     default:
         break;
@@ -134,6 +144,33 @@ bool StockManagementModule::modifyStock(int productId, int quantity)
 bool StockManagementModule::deleteProduct(int productId)
 {
     QString statement = QString("DELETE FROM Product WHERE product_id = \'%1\'").arg(productId);
+    bool ok;
+    DatabaseMediator::getSingleInstance()->executeSql(statement, ok);
+    return ok;//同上
+}
+
+bool StockManagementModule::addProduct(double price, const QString &name, const QString &picture, const QString &description, int instockQuantity, const QString &kind)
+{
+    int id = 0;
+    QString statement1 = "SELECT MAX(product_id) AS LargestId FROM Product";
+    QSqlQuery query1 = DatabaseMediator::getSingleInstance()->executeSql(statement1);
+    if (query1.next()) {
+        id = query1.value(0).toInt() + 1;
+    }
+    QString statement2 = QString("INSERT INTO Product VALUES (\'%1\', \'%2\', \'%3\', \'%4\', \'%5\', "
+                                 "\'%6\', \'%7\')").arg(
+                QString::number(id), QString::number(price), name, picture, description, QString::number(instockQuantity), kind);
+    bool ok;
+    DatabaseMediator::getSingleInstance()->executeSql(statement2, ok);
+    return ok;//同上
+}
+
+bool StockManagementModule::modifyProduct(int productId, double price, const QString &name, const QString &picture, const QString &description, int instockQuantity, const QString &kind)
+{
+    QString statement = QString("UPDATE Product SET price = \'%1\', name = \'%2\', picture = \'%3\' "
+                                ", description = \'%4\', instock_quantity = \'%5\', kind = \'%6\' "
+                                "WHERE product_id = \'%7\'").arg(
+               QString::number(price), name, picture, description, QString::number(instockQuantity), kind, QString::number(productId));
     bool ok;
     DatabaseMediator::getSingleInstance()->executeSql(statement, ok);
     return ok;//同上

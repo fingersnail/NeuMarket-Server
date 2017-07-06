@@ -36,15 +36,13 @@ public:
         ViewSalesStatics_Method,
         QuerySalesMonthStatistic_Method,
         QuerySalesKindStatistic_Method,
+        QueryProductAllSales_Method
     };
 
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "") override;
+    QByteArray handleRequest(int methodName, QVariantList i);
     static SalesManagementModule* getSingleInstance();
-    QVector<shared_ptr<AbstractObject> > queryAllSales();
+    QVector<shared_ptr<AbstractObject> > queryAllSales(QDate beginDate, QDate endDate);
+    QVector<shared_ptr<AbstractObject> > queryProductAllSales(int productId, QDate beginDate, QDate endDate);
     QVector<shared_ptr<AbstractObject> > querySalesKindStatistic(QDate beginDate, QDate endDate);
     QVector<shared_ptr<AbstractObject> > querySalesMonthStatistic();
     QVector<shared_ptr<AbstractObject> > querySalesById(int productId);

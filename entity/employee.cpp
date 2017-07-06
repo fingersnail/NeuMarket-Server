@@ -28,12 +28,12 @@ void Employee::setGroupId(const int groupId)
     this->groupId = groupId;
 }
 
-QString Employee::getGender() const
+bool Employee::getGender() const
 {
     return gender;
 }
 
-void Employee::setGender(const QString &gender)
+void Employee::setGender(bool gender)
 {
     this->gender = gender;
 }
@@ -79,8 +79,18 @@ void Employee::setEmail(const QString &email)
 }
 
 QVariantList Employee::object2VariantList()
-{
+{//id(int),name,tel(string),address,isPosition(bool),email,sex(bool)
     QVariantList variantList;
-    variantList << employee_id << groupId << gender << name << phone << address << email;
+    variantList << employee_id << name << phone << address << isWorking << email << gender;
     return variantList;
+}
+
+bool Employee::getIsWorking() const
+{
+    return isWorking;
+}
+
+void Employee::setIsWorking(bool value)
+{
+    isWorking = value;
 }

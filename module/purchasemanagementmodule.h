@@ -27,17 +27,15 @@ public:
         ExcutePurchaseStockPlan_Method,
         QueryAllIsFinish_Method
     };
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "") override;
+   QByteArray handleRequest(int methodName, QVariantList i);
     static PurchaseManagementModule* getSingleInstance();
     QVector<shared_ptr<AbstractObject> > queryAllStockPlan();
     QVector<shared_ptr<AbstractObject> > queryStockPlanByProductId(int productId);
-    bool addStockPlan(int productId, int planEmployeeId, int supplierId, int quantity, double moneyAmount);
+    bool addStockPlan(int productId, int planEmployeeId, int purchaseEmployeeId, int supplierId,
+                      QDate time, int quantity, double moneyAmount, bool isFinished,
+                      QString comment);
     bool deleteStockPlan(int stockId);
-    bool excutePurchaseStockPlan(int purchaseId, int purchaseEmployeeId, const QString &comment);
+    bool excutePurchaseStockPlan(int purchaseId, int purchaseEmployeeId, bool isFinished);
     QVector<shared_ptr<AbstractObject> > queryAllIsFinish();
 
 private:

@@ -40,11 +40,12 @@ void PersonnelManagementModule::queryResult2EmployeeVector(QSqlQuery &query, QVe
     while (query.next()) {
         temp.setEmployeeId(query.value(0).toInt());
         temp.setGroupId(query.value(1).toInt());
-        temp.setGender(query.value(2).toString());
+        temp.setGender(query.value(2).toBool());
         temp.setName(query.value(3).toString());
         temp.setPhone(query.value(4).toString());
         temp.setAddress(query.value(5).toString());
         temp.setEmail(query.value(6).toString());
+        temp.setIsWorking(query.value(7).toBool());
         vec.push_back(make_shared<Employee>(temp));
     }
 }
@@ -55,20 +56,17 @@ void PersonnelManagementModule::queryResult2EmployeeObject(QSqlQuery &query, sha
     if (query.next()) {
         temp.setEmployeeId(query.value(0).toInt());
         temp.setGroupId(query.value(1).toInt());
-        temp.setGender(query.value(2).toString());
+        temp.setGender(query.value(2).toBool());
         temp.setName(query.value(3).toString());
         temp.setPhone(query.value(4).toString());
         temp.setAddress(query.value(5).toString());
         temp.setEmail(query.value(6).toString());
+        temp.setIsWorking(query.value(7).toBool());
     }
     obj = make_shared<Employee>(temp);
 }
 
-QByteArray PersonnelManagementModule::handleRequest(int methodName,
-                                                    const QString &parameter1, const QString &parameter2,
-                                                    const QString &parameter3, const QString &parameter4,
-                                                    const QString &parameter5, const QString &parameter6,
-                                                    const QString &parameter7)
+QByteArray PersonnelManagementModule::handleRequest(int methodName, QVariantList i)
 {
     QByteArray sendMsg;
     bool excuteResult;
@@ -82,23 +80,23 @@ QByteArray PersonnelManagementModule::handleRequest(int methodName,
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case QuerySupplierById_Method:
-        resultObject = querySupplierById(parameter1.toInt());
+        resultObject = querySupplierById(i[0].toInt());
         variantList = Utilities::object2VariantList(resultObject);
         break;
     case QuerySupplierByName_Method:
-        resultVector = querySupplierByName(parameter1);
+        resultVector = querySupplierByName(i[0].toString());
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case ModifySupplier_Method:
-        excuteResult = modifySupplier(parameter1.toInt(), parameter2, parameter3, parameter4, parameter5, parameter6);
+        excuteResult = modifySupplier(i[0].toInt(), i[1].toString(), i[2].toString(), i[3].toString(), i[4].toString(), i[5].toString());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case DeleteSupplier_Method:
-        excuteResult = deleteSupplier(parameter1.toInt());
+        excuteResult = deleteSupplier(i[0].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case AddSupplier_Method:
-        excuteResult = addSupplier(parameter1, parameter2, parameter3, parameter4);
+        excuteResult = addSupplier(i[0].toString(), i[1].toString(), i[2].toString(), i[3].toString(), i[4].toString());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case QueryAllEmployee_Method:
@@ -106,25 +104,29 @@ QByteArray PersonnelManagementModule::handleRequest(int methodName,
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case QueryEmployeeById_Method:
-        resultObject = queryEmployeeById(parameter1.toInt());
+        resultObject = queryEmployeeById(i[0].toInt());
         variantList = Utilities::object2VariantList(resultObject);
         break;
     case QueryEmployeeByName_Method:
-        resultVector = queryEmployeeByName(parameter1);
+        resultVector = queryEmployeeByName(i[0].toString());
         variantList = Utilities::vector2VariantList(resultVector);
         break;
     case ModifyEmployee_Method:
-        excuteResult = modifyEmployee(parameter1.toInt(), parameter2.toInt(), parameter3, parameter4,
-                                      parameter5, parameter6, parameter7);
+        excuteResult = modifyEmployee(i[0].toInt(), i[1].toInt(), (i[2].toBool() ? "1" : "0"), i[3].toString(),
+                i[4].toString(), i[5].toString(), i[6].toString(), (i[7].toBool() ? "1" : "0"));
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case DeleteEmployee_Method:
-        excuteResult = deleteEmployee(parameter1.toInt());
+        excuteResult = deleteEmployee(i[0].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     case AddEmployee_Method:
-        excuteResult = addEmployee(parameter1.toInt(), parameter2, parameter3, parameter4, parameter5,
-                                   parameter6);
+        excuteResult = addEmployee(i[0].toString(), i[1].toString(), i[2].toString(), i[3].toString(), i[4].toString(),
+                                   i[5].toString());
+        variantList = Utilities::bool2VariantList(excuteResult);
+        break;
+    case ChangePositionState_Method:
+        excuteResult = changePositionState(i[0].toInt(), i[1].toInt());
         variantList = Utilities::bool2VariantList(excuteResult);
         break;
     default:
@@ -188,7 +190,7 @@ bool PersonnelManagementModule::deleteSupplier(int supplierId)
 }
 
 bool PersonnelManagementModule::addSupplier(const QString &name, const QString &address,
-                                            const QString &phone, const QString &description)
+                                            const QString &phone, const QString &description, const QString &picture)
 {
     int id = 0;
     QString statement1 = "SELECT MAX(supplier_id) AS LargestId FROM Supplier";
@@ -198,7 +200,8 @@ bool PersonnelManagementModule::addSupplier(const QString &name, const QString &
     }
     QString statement2 = QString("INSERT INTO Supplier VALUES (\'%1\', \'%2\', \'%3\', \'%4\',"
                                  " \'%5\', \'%6\')").arg(
-                QString::number(id), name, address, phone, description, "");
+                QString::number(id), name, address, phone, description, picture);
+    qDebug() << statement2;
     bool ok;
     DatabaseMediator::getSingleInstance()->executeSql(statement2, ok);
     return ok;//同上
@@ -234,12 +237,12 @@ QVector<shared_ptr<AbstractObject> > PersonnelManagementModule::queryEmployeeByN
 
 bool PersonnelManagementModule::modifyEmployee(int employeeId, int groupId, const QString &gender,
                                                const QString &name, const QString &phone,
-                                               const QString &address, const QString &email)
+                                               const QString &address, const QString &email, const QString &isWorking)
 {
     QString statement = QString("UPDATE Employee SET group_Id = \'%1\', gender = \'%2\', "
                                 "name = \'%3\', telephone = \'%4\', address = \'%5\', "
-                                "email = \'%6\' WHERE employee_id = \'%7\'").arg(
-                QString::number(groupId), gender, name, phone, address, email, QString::number(employeeId));
+                                "email = \'%6\', isWorking = \'%7\' WHERE employee_id = \'%8\'").arg(
+                QString::number(groupId), gender, name, phone, address, email, isWorking, QString::number(employeeId));
     bool ok;
     DatabaseMediator::getSingleInstance()->executeSql(statement, ok);
     return ok;//同上
@@ -253,9 +256,9 @@ bool PersonnelManagementModule::deleteEmployee(int employeeId)
     return ok;//同上
 }
 
-bool PersonnelManagementModule::addEmployee(int groupId, const QString &gender, const QString &name,
+bool PersonnelManagementModule::addEmployee(const QString &gender, const QString &name,
                                             const QString &phone, const QString &address,
-                                            const QString &email)
+                                            const QString &email, const QString &isWorking)
 {
     int id = 0;
     QString statement1 = "SELECT MAX(employee_id) AS LargestId FROM employee";
@@ -264,9 +267,19 @@ bool PersonnelManagementModule::addEmployee(int groupId, const QString &gender, 
         id = query1.value(0).toInt() + 1;
     }
     QString statement2 = QString("INSERT INTO employee VALUES (\'%1\', \'%2\', \'%3\', \'%4\', \'%5\', "
-                                 "\'%6\', \'%7\')").arg(
-                QString::number(id), QString::number(groupId), gender, name, phone, address, email);
+                                 "\'%6\', \'%7\', \'%8\')").arg(
+                QString::number(id), "0", gender, name, phone, address, email, isWorking);
+    qDebug() << "statement2" << statement2;
     bool ok;
     DatabaseMediator::getSingleInstance()->executeSql(statement2, ok);
+    return ok;//同上
+}
+
+bool PersonnelManagementModule::changePositionState(int employeeId, int status)
+{
+    QString statement = QString("UPDATE Employee SET isWorking = \'%1\' WHERE employee_id = \'%2\'").arg(
+                QString::number(status), QString::number(employeeId));
+    bool ok;
+    DatabaseMediator::getSingleInstance()->executeSql(statement, ok);
     return ok;//同上
 }

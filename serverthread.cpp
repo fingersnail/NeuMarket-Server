@@ -26,32 +26,29 @@ QByteArray ServerThread:: respondRequest(QByteArray &receivedMsg)
     QByteArray sendMsg;
     Parser p;
     QVariantList i = p.parse(receivedMsg).toList();
-    Utilities::variantList2Parameter(i, moduleName, methodName, parameter1, parameter2, parameter3,
-                                     parameter4, parameter5, parameter6, parameter7);
+    QVariantList j;
+    Utilities::variantList2Parameter(i, moduleName, methodName, j);
+    qDebug() << moduleName;
+    qDebug() << methodName;
+
     switch (moduleName) {
     case ModuleName::Login_Module:
-        sendMsg = LoginModule::getSingletonInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                     parameter4, parameter5, parameter6, parameter7);
+        sendMsg = LoginModule::getSingletonInstance()->handleRequest(methodName, j);
         break;
     case ModuleName::Personnel_Management_Module:
-        sendMsg = PersonnelManagementModule::getSingleInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                                parameter4, parameter5, parameter6, parameter7);
+        sendMsg = PersonnelManagementModule::getSingleInstance()->handleRequest(methodName, j);
         break;
     case ModuleName::Sales_Management_Module:
-        sendMsg = SalesManagementModule::getSingleInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                            parameter4, parameter5, parameter6, parameter7);
+        sendMsg = SalesManagementModule::getSingleInstance()->handleRequest(methodName, j);
         break;
     case ModuleName::Purchase_Management_Module:
-        sendMsg = PurchaseManagementModule::getSingleInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                               parameter4, parameter5, parameter6, parameter7);
+        sendMsg = PurchaseManagementModule::getSingleInstance()->handleRequest(methodName, j);
         break;
     case ModuleName::System_Management_Module:
-        SystemManagementModule::getSingleInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                   parameter4, parameter5, parameter6, parameter7);
+        sendMsg = SystemManagementModule::getSingleInstance()->handleRequest(methodName, j);
         break;
     case ModuleName::Stock_Management_Module:
-        StockManagementModule::getSingleInstance()->handleRequest(methodName, parameter1, parameter2, parameter3,
-                                                                  parameter4, parameter5, parameter6, parameter7);
+        sendMsg = StockManagementModule::getSingleInstance()->handleRequest(methodName, j);
         break;
     default:
         break;

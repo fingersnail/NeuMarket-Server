@@ -51,6 +51,6 @@ void User::setPassword(const QString &password)
 QVariantList User::object2VariantList()
 {
     QVariantList i;
-    i << employeeId << name << password << groupId;
+    i << employeeId << name << password;
     return i;
 }

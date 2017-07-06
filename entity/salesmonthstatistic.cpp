@@ -28,6 +28,6 @@ void SalesMonthStatistic::setMoneyAmount(double value)
 QVariantList SalesMonthStatistic::object2VariantList()
 {
     QVariantList i;
-    i << month << moneyAmount;
+    i << month.toString("MM") + "月" << moneyAmount;
     return i;
 }

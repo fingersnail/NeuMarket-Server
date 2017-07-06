@@ -17,8 +17,8 @@ public:
     int getGroupId() const;
     void setGroupId(const int groupId);
 
-    QString getGender() const;
-    void setGender(const QString&  gender);
+    bool getGender() const;
+    void setGender(bool gender);
 
     QString getName() const;
     void setName(const QString& name);
@@ -32,8 +32,12 @@ public:
     void setEmail(const QString& email);
 
     QVariantList object2VariantList() override;
+    bool getIsWorking() const;
+    void setIsWorking(bool value);
+
 private:
     int employee_id, groupId;
-    QString gender, name, address, phone, email;
+    QString name, address, phone, email;
+   bool gender, isWorking;
 };
 #endif // EMPLOYEE_H

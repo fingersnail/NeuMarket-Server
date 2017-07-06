@@ -31,11 +31,7 @@ public:
     enum LoginModule_Method {
         Validate_Method
     };
-    QByteArray handleRequest(int methodName,
-                             const QString &parameter1 = "", const QString &parameter2 = "",
-                             const QString &parameter3 = "", const QString &parameter4 = "",
-                             const QString &parameter5 = "", const QString &parameter6 = "",
-                             const QString &parameter7 = "");
+    QByteArray handleRequest(int methodName, QVariantList i);
     shared_ptr<AbstractObject> validate(int employeeId, const QString &password);
     static LoginModule *getSingletonInstance();
 private:

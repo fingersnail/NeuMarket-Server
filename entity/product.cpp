@@ -75,9 +75,9 @@ void Product::setInstockQuantity(int instockQuantity)
 }
 
 QVariantList Product::object2VariantList()
-{
+{ //id(int), name, catagory(string), num ,price ,info ,image(string)
     QVariantList variantList;
-    variantList << productId << price << name << picture << description << instockQuantity << kind;
+    variantList << productId << name << kind << instockQuantity << price << description << picture;
     return variantList;
 }
 

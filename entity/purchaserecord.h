@@ -41,6 +41,12 @@ public:
     void setComment(const QString &comment);
 
     QVariantList object2VariantList();
+    QString getSupplierName() const;
+    void setSupplierName(const QString &value);
+
+    QString getProductName() const;
+    void setProductName(const QString &value);
+
 private:
     int purchaseId;
     int productId;
@@ -52,6 +58,8 @@ private:
     bool isFinish;
     QDate purchaseDate;
     QString comment;
+    QString supplierName;
+    QString productName;
 };
 
 #endif // STOCK_H
